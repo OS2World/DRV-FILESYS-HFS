@@ -7,8 +7,8 @@ Ring 3 control program, a UHFS DLL (for FORMAT/CHKDSK), and utilities.
 | Field | Details |
 |---|---|
 | Version | 0.20 (BLDLEVEL `@#OS2World:0.20#@`; the historical source release is 0.10) |
-| Status | Partially working: everything builds; `hfs.ifs` loads and runs on ArcaOS and its boot messages follow the standard; the control program connects to it. Mounting an HFS volume, the filter and the UHFS DLL are **untested**. |
-| Tested on | ArcaOS 5.1.1 Dev VM (VirtualBox), 2026-11-17: IFS load, boot messages, control program start. No real hardware. |
+| Status | Partially working: everything builds; `hfs.ifs` loads on ArcaOS; mounting, listing, reading and writing files work on a generated HFS floppy image. The filter, the UHFS DLL (FORMAT/CHKDSK) and real Macintosh media are **untested**. |
+| Tested on | ArcaOS 5.1.1 Dev VM (VirtualBox), 2026-11-17: IFS load, boot messages, control program, mount/dir/read/write on a floppy image made by `test\mkhfsimg.py`. No real hardware, no real Mac disks. |
 | License | GNU GPL version 2 or later; see [LICENSE](LICENSE). See "License notes" below. |
 | Authors | Marcus Better (original HFS/2, 1996-1997); OS2World (Open Watcom port, 16-bit IFS, clean-room headers, boot messages, 2026) |
 | Original source | HFS/2 0.10 (April 12, 1997), Marcus Better; git history of https://github.com/OS2World/DRV-FILESYS-HFS (tag `0.10` = the original code). `libhfs` is Robert Leslie's. |
@@ -85,17 +85,20 @@ All binaries carry `@#OS2World:0.20#@` plus a description (`C:\OS2\BLDLEVEL.EXE 
 
 ## Sample / test
 
-`sample\` and `test\` are empty. Smoke test used so far (Dev VM): add `IFS=...\HFS.IFS /V` to
-`CONFIG.SYS`, reboot, read the boot message, run `HFS.EXE /V` detached. A mount test needs
-an HFS-formatted disk or image.
+`sample\` is empty. `test\mkhfsimg.py` (Python 3) writes a 1.44 MB HFS floppy image with a few files and
+folders and an OS/2 boot sector (a raw Mac diskette is not recognised by OS/2 without the filter driver or
+`PREPARE`). Test used on the Dev VM: load the IFS, start `HFS.EXE` detached, attach the image to the VM
+floppy drive (change the volume serial in the image each time, otherwise the kernel treats it as the
+same disk re-inserted), then `dir A:`, `type`, `copy` in both directions, `SYNC` before removing it.
 
 ## Known issues
 
-- Mounting HFS volumes, reading and writing files, the filter and the UHFS DLL have not been
-  tested. The value used for `ERROR_VOLUME_NOT_MOUNTED` (26) is a placeholder that could
+- The filter, the UHFS DLL and real Macintosh media have not been tested. The value used for `ERROR_VOLUME_NOT_MOUNTED` (26) is a placeholder that could
   not be sourced; it matters when `FS_MOUNT` rejects a volume (check on the VM that a non-HFS
   volume still falls through to the other file systems without an error popup).
 - `FSKILL.EXE` returned success but the control program kept running in one test.
+- Time stamps shown by `dir` are off by several hours; `dir` shows "0 bytes free" although the volume
+  reports free blocks; the alternate MDB is not updated by writes.
 - The compiler gives about 60 warnings (pointer and type conversions) that need review.
 - Four layout details of the clean-room headers are marked UNVERIFIED
   (`doc\cleanroom\out\PROVENANCE.md`).
