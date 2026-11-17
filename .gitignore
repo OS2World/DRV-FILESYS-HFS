@@ -1,0 +1,15 @@
+/bin/
+*.obj
+*.lib
+*.dll
+*.exe
+*.ifs
+*.flt
+*.map
+*.sym
+*.log
+*.err
+*~
+*.bak
+test/*.img
+/all

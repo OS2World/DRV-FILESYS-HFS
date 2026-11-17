@@ -1,0 +1,99 @@
+# fshelper_imports.lnk - wlink import directives for the kernel file system
+# helper calls (module FSHELPER) used by HFS/2.
+#
+# GPL v2 or later.  Clean-room, written 2026 from public sources; see
+# PROVENANCE2.md.
+#
+# Use:   wlink @hfs.lnk      with a line   @fshelper_imports.lnk   in hfs.lnk
+#        (wlink accepts "@file" inside a directive file), for example:
+#
+#            system os2 dll
+#            name hfs.ifs
+#            file ...your objects...
+#            @fshelper_imports.lnk
+#
+# How the kernel exports them: the helpers are NOT in a disk DLL.  They are
+# entries of the kernel-provided module named FSHELPER, and the IFS imports
+# them by ORDINAL (the module has no usable names).  Ordinals and module name
+# were confirmed in two independent public sources (see PROVENANCE2.md).
+#
+# Syntax (Open Watcom linker guide, IMPORT directive):
+#       IMPORT internal_name module_name.ordinal
+# internal_name is the symbol the object files reference.  For a function
+# declared `far pascal` Open Watcom 16-bit emits the name in UPPER CASE with
+# no underscore (predefined __pascal alias), which is exactly what is written
+# below.  If you declare the helpers with another convention the linker will
+# report unresolved externals; adjust the internal names then (a quick check:
+# wdis the object, or read the unresolved list of the first link).
+#
+# Only the helpers HFS/2 calls are active.  The others of the module are
+# listed commented out for completeness (all 55 entries of the table).
+#
+# Alternative: build an import library once and link it instead:
+#     wlib -b -n fshelper.lib ++FSH_SEMCLEAR.FSHELPER..FSH_SEMCLEAR.7 ...
+# (wlib entry syntax: ++sym.dll_name[.[altsym].export_name][.ordinal]).
+# The exact wlib spelling for "ordinal only" is UNVERIFIED (not run here: no
+# Open Watcom on this machine); the IMPORT lines below are the primary route.
+
+# --- used by HFS/2 (37) -----------------------------------------------------
+import FSH_SEGALLOC           FSHELPER.1
+import FSH_SEGFREE            FSHELPER.2
+import FSH_SEGREALLOC         FSHELPER.3
+import FSH_FORCENOSWAP        FSHELPER.4
+import FSH_INTERR             FSHELPER.5
+import FSH_SEMREQUEST         FSHELPER.6
+import FSH_SEMCLEAR           FSHELPER.7
+import FSH_PROBEBUF           FSHELPER.8
+import FSH_GETPRIORITY        FSHELPER.9
+import FSH_FLUSHBUF           FSHELPER.11
+import FSH_CRITERROR          FSHELPER.12
+import FSH_DEVIOCTL           FSHELPER.13
+import FSH_GETVOLPARM         FSHELPER.14
+import FSH_FINDDUPHVPB        FSHELPER.15
+import FSH_DOVOLIO            FSHELPER.16
+import FSH_ADDSHARE           FSHELPER.17
+import FSH_REMOVESHARE        FSHELPER.18
+import FSH_GETOVERLAPBUF      FSHELPER.19
+import FSH_ISCURDIRPREFIX     FSHELPER.20
+import FSH_LOADCHAR           FSHELPER.21
+import FSH_PREVCHAR           FSHELPER.22
+import FSH_STORECHAR          FSHELPER.23
+import FSH_SEMSET             FSHELPER.24
+import FSH_SEMSETWAIT         FSHELPER.25
+import FSH_SEMWAIT            FSHELPER.26
+import FSH_WILDMATCH          FSHELPER.27
+import FSH_YIELD              FSHELPER.28
+import FSH_DOVOLIO2           FSHELPER.29
+import FSH_FINDCHAR           FSHELPER.30
+import FSH_CANONICALIZE       FSHELPER.32
+import FSH_QSYSINFO           FSHELPER.44
+import FSH_NAMEFROMSFN        FSHELPER.45
+import FSH_UPPERCASE          FSHELPER.46
+import FSH_CHECKEANAME        FSHELPER.47
+import FSH_SETVOLUME          FSHELPER.49
+import FSH_REGISTERPERFCTRS   FSHELPER.51
+import FSH_IOBOOST            FSHELPER.52
+
+# --- other entries of the module, not used by HFS/2 (kept for reference) ----
+# import FSH_IOSEMCLEAR         FSHELPER.10
+# import FSH_CALLDRIVER         FSHELPER.48
+# import FSH_STACKSPACE         FSHELPER.50
+# import FSH_QUERYSERVERTHREAD  FSHELPER.53
+# import FSH_QUERYOPLOCK        FSHELPER.54
+# import FSH_EXTENDTIMESLICE    FSHELPER.55
+#
+# Mini-FSD (boot time) variants.  Only a mini-FSD calls these; a normal IFS
+# does not need them, so the old stub definitions in src\Ring0\fshelper.c
+# (MFSH_*) should simply be dropped:
+# import MFSH_SETBOOTDRIVE      FSHELPER.31
+# import MFSH_DOVOLIO           FSHELPER.33
+# import MFSH_INTERR            FSHELPER.34
+# import MFSH_SEGALLOC          FSHELPER.35
+# import MFSH_SEGFREE           FSHELPER.36
+# import MFSH_SEGREALLOC        FSHELPER.37
+# import MFSH_CALLRM            FSHELPER.38
+# import MFSH_LOCK              FSHELPER.39
+# import MFSH_PHYSTOVIRT        FSHELPER.40
+# import MFSH_UNLOCK            FSHELPER.41
+# import MFSH_UNPHYSTOVIRT      FSHELPER.42
+# import MFSH_VIRT2PHYS         FSHELPER.43

@@ -674,7 +674,7 @@ service all requests from the operating system.
 
 :p.
 The syntax for HFS.IFS is
-:xmp.IFS=HFS.IFS [/Q]
+:xmp.IFS=HFS.IFS [/V] [/Q] [/W] [/AA]
 
 :exmp.
 where brackets indicate an optional parameter.
@@ -683,8 +683,19 @@ where brackets indicate an optional parameter.
 :dthd.:hp2.Option:ehp2.
 :ddhd.:hp2.Description:ehp2.
 :dt./Q
-:dd.Suppress the banner at startup.
+:dd.Suppress all HFS.IFS messages, including initialization errors.
+:dt./V
+:dd.Display the HFS/2 version and build date at startup.
+:dt./W
+:dd.Wait for a key press after the HFS.IFS messages.
+:dt./AA
+:dd.Beep when HFS.IFS has loaded.
 :edl.
+:p.
+Normally HFS.IFS is quiet and shows only errors. Every message line starts with
+HFS&colon. . The filter driver accepts /V and /Q in the same way:
+:xmp.BASEDEV=HFSFLT.FLT [/V] [/Q]
+:exmp.
 
 .*********************************
 :h2 id=420.The control program
@@ -1232,6 +1243,13 @@ a diskette.
 :li.Fixed a bug with the filter driver that caused problems with some
 removable drives.
 :li.Added /Q command line option to HFS.IFS to suppress the banner.
+:eul.
+
+:p.:hp2.Version 0.20:ehp2. (2026)
+:ul compact.
+:li.Open Watcom build; the IFS is a 16-bit module.
+:li.Standard boot messages (HFS&colon. prefix) and the options /V, /Q, /W and /AA.
+:li.BLDLEVEL information in all programs.
 :eul.
 
 .**********************************************************************
